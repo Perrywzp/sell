@@ -17,7 +17,7 @@
 				<div class="description">
 					{{seller.description}}/{{seller.deliveryTime}}分钟送达
 				</div>
-				<div v-if="seller.supports" class="support">
+				<div v-if="seller.supports" class="support" @click="showDetail">
 					<span class="icon" :class="classMap[seller.supports[0].type]"></span>
 					<span class="text">{{seller.supports[0].description}}</span>
 				</div>
@@ -27,10 +27,24 @@
 				<i class="icon-keyboard_arrow_right"></i>
 			</div>
 		</div>
-		<div class="bulletin-wrapper">
+		<div class="bulletin-wrapper" @click="showDetail">
 			<span class="bulletin-title"></span>
 			<span class="bulletin-text">{{seller.bulletin}}</span>
-			<i class="icon-keybord_arrow_right"></i>
+			<i class="icon-keyboard_arrow_right"></i>
+		</div>
+		<div class="background">
+			<img :src="seller.avatar" width="100%" height="100%">
+		</div>
+		<div v-show="detailShow" class="detail">
+			<div class="detail-wrapper clearfix">
+				<div class="detail-main">
+					<h1 class="name">{{seller.name}}</h1>
+					<star :size="48" :score="seller.score"></star>
+				</div>
+			</div>
+			<div class="detail-close">
+				<i class="icon-close"></i>
+			</div>
 		</div>
 	</div>
 
@@ -39,8 +53,10 @@
 	@import "../../common/stylus/mixin.styl"
 
 	.header
+		position relative
+		overflow hidden
 		color #fff
-		background #999
+		background rgba(7, 17, 27, 0.5) // 可以透明的层
 		.content-wrapper
 			position relative
 			padding 24px 12px 18px 24px
@@ -76,6 +92,7 @@
 					.icon
 						display inline-block
 						vertical-align top
+						margin-top 2px
 						width 12px
 						height 12px
 						margin-right 4px
@@ -113,17 +130,18 @@
 					line-height 24px
 					font-size 10px
 
-
 		.bulletin-wrapper
+			position relative
 			height 28px
 			line-height 28px
 			padding 0 22px 0 12px
 			white-space nowrap
 			overflow hidden
 			text-overflow ellipsis
-			font-size 0
 			.bulletin-title
 				display inline-block
+				vertical-align top
+				margin-top 7px
 				width 22px
 				height 12px
 				bg-image('bulletin')
@@ -131,18 +149,77 @@
 				background-repeat no-repeat
 			.bulletin-text
 				font-size 10px
-				font-weight 200
+				margin 0 4px
+				vertical-align top
+			.icon-keyboard_arrow_right
+				position absolute
+				font-size 10px
+				right 12px
+				top 8px
+		.background
+			position absolute
+			top 0
+			left 0
+			width 100%
+			height 100%
+			z-index -1 // 使其在最外层图层的下面
+			filter: blur(10px)
+		// 滤镜效果，做模糊层
+		.detail
+			position fixed
+			top 0
+			left 0
+			z-index 100
+			width 100%
+			height 100%
+			overflow auto
+			background rgba(7, 17, 27, 0.8)
+			.detail-wrapper
+				width 100%
+				min-height 100%
+				.detail-main
+					margin-top 64px
+					padding-bottom 64px
+					.name
+						line-height 16px
+						text-align center
+						font-size 16px
+						font-weight 700px
+
+			.detail-close
+				position relative
+				width 32px
+				height 32px
+				margin -64px auto 0 auto
+				clear both
+				font-size 32px
+
 
 </style>
 <script type="text/ecmascript-6">
+	import star from 'components/star/star'
+
 	export default {
 		props: {
 			seller: {
 				type: Object
 			}
 		},
+		data () {
+			return {
+				detailShow: false
+			}
+		},
+		methods:{
+			showDetail () {
+				this.detailShow = true;
+			}
+		},
 		created () {
 			this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
+		},
+		components:{
+			star
 		}
 	}
 </script>
