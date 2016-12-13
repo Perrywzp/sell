@@ -14,7 +14,7 @@
 	</div>
 </template>
 <style lang="stylus" rel="stylesheet/stylus">
-	import "../../common/stylus/mixin.styl"
+	@import "../../common/stylus/mixin.styl"
 
 	.star
 		font-size 0
@@ -82,7 +82,7 @@
 		},
 		computed: {
 			starType () {
-				return 'stat-' + this.size;
+				return 'star-' + this.size;
 			},
 			itemClasses () {
 				let result = [];
