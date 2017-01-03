@@ -10,18 +10,19 @@
 				<li v-for="(item, index) in goods" class="menu-item"
 						:class="{current: currentIndex === index}"
 						@click="selectMenu(index, $event)">
-					<span class="text border-1px">
-						<span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
-					</span>
+						<span class="text border-1px">
+							<span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
+						</span>
 				</li>
 			</ul>
 		</div>
 		<div class="foods-wrapper" ref="foodsWrapper">
 			<ul>
-				<li v-for="item in goods" class="food-list food-list-hook">
+				<li v-for="(item,index) in goods" class="food-list food-list-hook" :key="index">
 					<h1 class="title">{{item.name}}</h1>
 					<ul>
-						<li v-for="food in item.foods" class="food-item">
+						<li @click="selectFood(food, $event)" v-for="(food,foodIndex) in item.foods" class="food-item border-1px"
+								:key="foodIndex">
 							<div class="icon">
 								<img width="57" height="57" :src="food.icon">
 							</div>
@@ -47,12 +48,14 @@
 		</div>
 		<shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice"
 							:min-price="seller.minPrice"></shopcart>
+		<food :food="selectedFood" ref="food"></food>
 	</div>
 </template>
 <script type="text/ecmascript-6">
 	import BScroll from 'better-scroll';
 	import shopcart from 'components/shopcart/shopcart'
 	import cartcontrol from 'components/cartcontrol/cartcontrol'
+	import food from 'components/food/food'
 	import eventHub from '../../eventhub'
 
 	const ERR_OK = 0;
@@ -67,7 +70,8 @@
 			return {
 				goods: [],
 				listHeight: [],
-				scrollY: 0
+				scrollY: 0,
+				selectedFood: {}
 			}
 		},
 
@@ -124,6 +128,14 @@
 				this.foodsScroll.scrollToElement(el, 300);
 			},
 
+			selectFood (food, event) {
+				if (!event._constructed) {
+					return;
+				}
+				this.$refs.food.show();
+				this.selectedFood = food;
+			},
+
 			_initScroll () {
 				this.menuScroll = new BScroll(this.$refs.menuWrapper, {
 					click: true
@@ -160,7 +172,8 @@
 
 		components: {
 			shopcart,
-			cartcontrol
+			cartcontrol,
+			food
 		}
 	}
 </script>
